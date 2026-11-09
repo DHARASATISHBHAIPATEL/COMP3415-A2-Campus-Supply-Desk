@@ -81,7 +81,7 @@ Then:
 3. Enter `notebook` for the product ID.
 4. Enter `2` for the quantity.
 5. Press Enter without typing another product ID to finish adding items.
-6. Press Enter at the fulfillment prompt to use `pickup`.
+6. Press Enter at the fulfillment prompt to use `pickup`. You can also type `delivery` (standard, $6.00, free from $100.00) or `express` ($12.00, never waived).
 
 With sufficient stock available, the quote should show a **$10.00 total**.
 
@@ -103,6 +103,7 @@ No extra packages are needed. Every test uses a temporary save file, so running 
 |---|---|
 | `tests/test_smoke.py` | The four supplied starter tests (unchanged). |
 | `tests/test_service_behaviour.py` | Assignment Task 2 tests for `OrderService`, grouped into `NormalBehaviourTests`, `BoundaryBehaviourTests`, `InvalidInputTests` and `PreserveBehaviourTests`. Expected values come from `FUNCTIONAL_SPEC.md`. |
+| `tests/test_cr01_express.py` | CR-01 express delivery: the client's examples, fee never waived, discount unchanged, reopen/cancel of express orders, CLI and menu support. |
 | `tests/test_interfaces.py` | Command-line (`cli.main`) and interactive menu (`menu.run_menu`) behaviour that refactoring must preserve: defaults, JSON output, exit statuses, confirmation prompts, error handling. |
 
 Run one group only, for example:
@@ -113,7 +114,7 @@ python -m unittest tests.test_service_behaviour.BoundaryBehaviourTests -v
 
 ### Expected result and known failures
 
-On the refactored code (before CR-01) the suite runs **42 tests with 3 failures**. The three failures are deliberate evidence of defects in the supplied behaviour, not broken tests; their expected values come from the specification and were not changed to make them pass:
+On the final code (refactored, with CR-01) the suite runs **58 tests with 3 failures**. The three failures are deliberate evidence of defects in the supplied behaviour, not broken tests; their expected values come from the specification and were not changed to make them pass:
 
 | Failing test | Spec requirement | Actual behaviour |
 |---|---|---|
@@ -129,6 +130,10 @@ The `evidence/` folder holds the recorded runs (date, Python version and commit 
 - `01-baseline-before-refactoring.txt`: all tests on the original code, before refactoring.
 - `02-after-refactoring.txt`: all tests after the three refactorings.
 - `02-cli-differential.txt`: the same CLI scenario run against the original and refactored code, with identical output.
+- `CR-01-part-A-prediction.md`: the CR-01 prediction, committed before implementation.
+- `03-cr01-tests-before-implementation.txt`: the CR-01 tests failing on the pre-CR-01 code.
+- `04-after-cr01.txt`: all tests after CR-01 (final run).
+- `04-cli-differential-after-cr01.txt`: the pre-CR-01 CLI scenario re-run after CR-01, with identical output (pickup and standard delivery unchanged).
 
 To re-record a run: `sh evidence/run_tests.sh "<label>" evidence/<file>.txt`. To repeat the differential check, run `sh evidence/compare_cli.sh <folder>` once on a checkout of the original commit and once on this folder, then compare the two outputs with `diff`.
 
@@ -198,7 +203,10 @@ You can perform operations directly instead of using the menu. These commands ar
 python -m supplydesk catalog
 python -m supplydesk quote --customer regular --item notebook:2
 python -m supplydesk quote --customer student --fulfillment delivery --item hoodie:2
+python -m supplydesk quote --customer student --fulfillment express --item hoodie:2
 ```
+
+`--fulfillment` accepts `pickup` (default), `delivery` or `express`. Express delivery (client change request CR-01, see `docs/CR-01.md`) always costs $12.00, even when standard delivery would be free.
 
 Use repeated `--item` options for multiple items:
 

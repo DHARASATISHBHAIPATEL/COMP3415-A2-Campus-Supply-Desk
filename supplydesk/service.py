@@ -4,13 +4,14 @@ from supplydesk.storage import JsonStore
 
 # Business policy from FUNCTIONAL_SPEC.md. All money values are integer cents.
 CUSTOMER_TYPES = ("regular", "student")
-FULFILLMENT_OPTIONS = ("pickup", "delivery")
+FULFILLMENT_OPTIONS = ("pickup", "delivery", "express")
 MIN_QUANTITY = 1
 MAX_QUANTITY = 99
 STUDENT_DISCOUNT_THRESHOLD_CENTS = 5000  # spec: "at least"; code still uses ">" (known defect, kept by refactoring)
 STUDENT_DISCOUNT_PERCENT = 10
 FREE_DELIVERY_THRESHOLD_CENTS = 10000
 DELIVERY_CHARGE_CENTS = 600
+EXPRESS_DELIVERY_CHARGE_CENTS = 1200  # CR-01: flat fee, never waived
 
 
 def percent_of_cents(amount_cents, percent):
@@ -24,7 +25,9 @@ def calculate_charges(customer_type, fulfillment, subtotal_cents):
     if customer_type == "student" and subtotal_cents > STUDENT_DISCOUNT_THRESHOLD_CENTS:
         discount = percent_of_cents(subtotal_cents, STUDENT_DISCOUNT_PERCENT)
     delivery = 0
-    if fulfillment == "delivery" and subtotal_cents - discount < FREE_DELIVERY_THRESHOLD_CENTS:
+    if fulfillment == "express":
+        delivery = EXPRESS_DELIVERY_CHARGE_CENTS
+    elif fulfillment == "delivery" and subtotal_cents - discount < FREE_DELIVERY_THRESHOLD_CENTS:
         delivery = DELIVERY_CHARGE_CENTS
     return discount, delivery
 
@@ -79,7 +82,7 @@ class OrderService:
         if customer_type not in CUSTOMER_TYPES:
             raise ValueError("Customer type must be regular or student.")
         if fulfillment not in FULFILLMENT_OPTIONS:
-            raise ValueError("Fulfillment must be pickup or delivery.")
+            raise ValueError("Fulfillment must be pickup, delivery or express.")
         if not isinstance(items, list) or not items:
             raise ValueError("An order must contain at least one item.")
         lines = []
