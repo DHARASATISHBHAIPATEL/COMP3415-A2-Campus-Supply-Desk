@@ -1,0 +1,3 @@
+# Regression check: CLI scenario on pre-CR-01 commit 00bd6a0 vs CR-01 commit 640332c
+# command: sh evidence/compare_cli.sh <dir> for each, then diff
+RESULT: outputs identical (475 lines): pickup/standard delivery, validation, stock, numbering and cancellation unchanged

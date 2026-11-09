@@ -1,0 +1,93 @@
+# Final: refactored code + CR-01
+# date: 2026-11-09T17:02:38Z  Python 3.13.18  commit: 640332c
+test_cli_default_still_pickup (test_cr01_express.ExpressInterfaceTests.test_cli_default_still_pickup) ... ok
+test_cli_example_from_cr01 (test_cr01_express.ExpressInterfaceTests.test_cli_example_from_cr01) ... ok
+test_cli_help_lists_express_and_unknown_value_rejected (test_cr01_express.ExpressInterfaceTests.test_cli_help_lists_express_and_unknown_value_rejected) ... ok
+test_cli_place_express_and_show (test_cr01_express.ExpressInterfaceTests.test_cli_place_express_and_show) ... ok
+test_menu_blank_fulfillment_still_pickup (test_cr01_express.ExpressInterfaceTests.test_menu_blank_fulfillment_still_pickup) ... ok
+test_menu_express_quote_and_prompt_mentions_express (test_cr01_express.ExpressInterfaceTests.test_menu_express_quote_and_prompt_mentions_express) ... ok
+test_express_order_survives_reopen_and_cancel (test_cr01_express.ExpressOrderLifecycleTests.test_express_order_survives_reopen_and_cancel) ... ok
+test_express_still_validates_stock (test_cr01_express.ExpressOrderLifecycleTests.test_express_still_validates_stock) ... ok
+test_other_fulfillment_values_still_invalid (test_cr01_express.ExpressOrderLifecycleTests.test_other_fulfillment_values_still_invalid) ... ok
+test_discount_on_merchandise_only_and_unchanged_by_express (test_cr01_express.ExpressPricingTests.test_discount_on_merchandise_only_and_unchanged_by_express) ... ok
+test_example_regular_three_hoodies_standard_vs_express (test_cr01_express.ExpressPricingTests.test_example_regular_three_hoodies_standard_vs_express) ... ok
+test_example_regular_two_notebooks_express (test_cr01_express.ExpressPricingTests.test_example_regular_two_notebooks_express) ... ok
+test_example_student_two_hoodies_express (test_cr01_express.ExpressPricingTests.test_example_student_two_hoodies_express) ... ok
+test_express_fee_not_waived_at_free_delivery_threshold (test_cr01_express.ExpressPricingTests.test_express_fee_not_waived_at_free_delivery_threshold) ... ok
+test_express_quote_and_placed_order_agree (test_cr01_express.ExpressPricingTests.test_express_quote_and_placed_order_agree) ... ok
+test_standard_delivery_and_pickup_unchanged (test_cr01_express.ExpressPricingTests.test_standard_delivery_and_pickup_unchanged) ... ok
+test_badly_formed_item_rejected_by_parser (test_interfaces.CliTests.test_badly_formed_item_rejected_by_parser) ... ok
+test_place_then_show_and_cancel (test_interfaces.CliTests.test_place_then_show_and_cancel) ... ok
+test_quote_defaults_to_regular_pickup_and_prints_json_cents (test_interfaces.CliTests.test_quote_defaults_to_regular_pickup_and_prints_json_cents) ... ok
+test_rejected_request_exits_with_status_2 (test_interfaces.CliTests.test_rejected_request_exits_with_status_2) ... ok
+test_unknown_order_exits_with_status_2 (test_interfaces.CliTests.test_unknown_order_exits_with_status_2) ... ok
+test_confirmed_placement_is_saved (test_interfaces.MenuTests.test_confirmed_placement_is_saved) ... ok
+test_declining_placement_leaves_no_saved_data (test_interfaces.MenuTests.test_declining_placement_leaves_no_saved_data) ... ok
+test_end_of_input_exits_cleanly (test_interfaces.MenuTests.test_end_of_input_exits_cleanly) ... ok
+test_invalid_request_reports_error_and_returns_to_menu (test_interfaces.MenuTests.test_invalid_request_reports_error_and_returns_to_menu) ... ok
+test_menu_quote_with_blank_defaults (test_interfaces.MenuTests.test_menu_quote_with_blank_defaults) ... ok
+test_money_formats_cents_as_dollars (test_interfaces.MenuTests.test_money_formats_cents_as_dollars) ... ok
+test_non_integer_quantity_asks_to_reenter_item (test_interfaces.MenuTests.test_non_integer_quantity_asks_to_reenter_item) ... ok
+test_combined_duplicate_lines_cannot_exceed_stock (test_service_behaviour.BoundaryBehaviourTests.test_combined_duplicate_lines_cannot_exceed_stock) ... FAIL
+test_delivery_charged_when_discount_drops_below_10000 (test_service_behaviour.BoundaryBehaviourTests.test_delivery_charged_when_discount_drops_below_10000) ... ok
+test_delivery_free_at_exactly_10000_after_discount (test_service_behaviour.BoundaryBehaviourTests.test_delivery_free_at_exactly_10000_after_discount) ... ok
+test_duplicate_lines_within_stock_stay_separate (test_service_behaviour.BoundaryBehaviourTests.test_duplicate_lines_within_stock_stay_separate) ... ok
+test_order_can_take_all_remaining_stock (test_service_behaviour.BoundaryBehaviourTests.test_order_can_take_all_remaining_stock) ... ok
+test_quantity_limits_1_and_99_accepted_by_validation (test_service_behaviour.BoundaryBehaviourTests.test_quantity_limits_1_and_99_accepted_by_validation) ... ok
+test_student_discount_applies_at_exactly_5000 (test_service_behaviour.BoundaryBehaviourTests.test_student_discount_applies_at_exactly_5000) ... FAIL
+test_student_discount_just_above_5000_is_integer_ten_percent (test_service_behaviour.BoundaryBehaviourTests.test_student_discount_just_above_5000_is_integer_ten_percent) ... ok
+test_student_discount_not_applied_below_5000 (test_service_behaviour.BoundaryBehaviourTests.test_student_discount_not_applied_below_5000) ... ok
+test_empty_or_non_list_items_rejected (test_service_behaviour.InvalidInputTests.test_empty_or_non_list_items_rejected) ... ok
+test_invalid_quantities_rejected (test_service_behaviour.InvalidInputTests.test_invalid_quantities_rejected) ... ok
+test_malformed_save_file_raises_instead_of_resetting (test_service_behaviour.InvalidInputTests.test_malformed_save_file_raises_instead_of_resetting) ... ok
+test_rejected_order_does_not_consume_order_id (test_service_behaviour.InvalidInputTests.test_rejected_order_does_not_consume_order_id) ... ok
+test_unknown_or_missing_product_rejected (test_service_behaviour.InvalidInputTests.test_unknown_or_missing_product_rejected) ... ok
+test_unknown_order_id_rejected (test_service_behaviour.InvalidInputTests.test_unknown_order_id_rejected) ... ok
+test_unsupported_customer_or_fulfillment_rejected (test_service_behaviour.InvalidInputTests.test_unsupported_customer_or_fulfillment_rejected) ... ok
+test_order_ids_increase_and_history_keeps_placement_order (test_service_behaviour.NormalBehaviourTests.test_order_ids_increase_and_history_keeps_placement_order) ... ok
+test_place_order_deducts_stock_and_saves (test_service_behaviour.NormalBehaviourTests.test_place_order_deducts_stock_and_saves) ... ok
+test_quote_lists_line_details_and_does_not_create_save_file (test_service_behaviour.NormalBehaviourTests.test_quote_lists_line_details_and_does_not_create_save_file) ... ok
+test_regular_delivery_three_hoodies_free_delivery (test_service_behaviour.NormalBehaviourTests.test_regular_delivery_three_hoodies_free_delivery) ... ok
+test_cancel_keeps_order_in_history_and_id_not_reused (test_service_behaviour.PreserveBehaviourTests.test_cancel_keeps_order_in_history_and_id_not_reused) ... ok
+test_cancelling_twice_restores_stock_only_once (test_service_behaviour.PreserveBehaviourTests.test_cancelling_twice_restores_stock_only_once) ... FAIL
+test_historical_prices_not_recalculated (test_service_behaviour.PreserveBehaviourTests.test_historical_prices_not_recalculated) ... ok
+test_quote_and_placement_agree_on_pricing (test_service_behaviour.PreserveBehaviourTests.test_quote_and_placement_agree_on_pricing) ... ok
+test_quote_does_not_change_existing_save_file (test_service_behaviour.PreserveBehaviourTests.test_quote_does_not_change_existing_save_file) ... ok
+test_reopen_preserves_history_stock_and_numbering (test_service_behaviour.PreserveBehaviourTests.test_reopen_preserves_history_stock_and_numbering) ... ok
+test_cancel_order_restores_stock (test_smoke.OrderSmokeTests.test_cancel_order_restores_stock) ... ok
+test_order_can_be_reopened (test_smoke.OrderSmokeTests.test_order_can_be_reopened) ... ok
+test_regular_pickup_quote (test_smoke.OrderSmokeTests.test_regular_pickup_quote) ... ok
+test_student_delivery_quote (test_smoke.OrderSmokeTests.test_student_delivery_quote) ... ok
+
+======================================================================
+FAIL: test_combined_duplicate_lines_cannot_exceed_stock (test_service_behaviour.BoundaryBehaviourTests.test_combined_duplicate_lines_cannot_exceed_stock)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/COMP3415-A2-Campus-Supply-Desk/tests/test_service_behaviour.py", line 149, in test_combined_duplicate_lines_cannot_exceed_stock
+    with self.assertRaises(ValueError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_student_discount_applies_at_exactly_5000 (test_service_behaviour.BoundaryBehaviourTests.test_student_discount_applies_at_exactly_5000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/COMP3415-A2-Campus-Supply-Desk/tests/test_service_behaviour.py", line 97, in test_student_discount_applies_at_exactly_5000
+    self.assertEqual(quote["discount_cents"], 500)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 500
+
+======================================================================
+FAIL: test_cancelling_twice_restores_stock_only_once (test_service_behaviour.PreserveBehaviourTests.test_cancelling_twice_restores_stock_only_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/COMP3415-A2-Campus-Supply-Desk/tests/test_service_behaviour.py", line 272, in test_cancelling_twice_restores_stock_only_once
+    self.assertEqual(self.stock("mug"), 8)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 9 != 8
+
+----------------------------------------------------------------------
+Ran 58 tests in 0.051s
+
+FAILED (failures=3)
+exit status: 1
