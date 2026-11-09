@@ -95,17 +95,42 @@ From the folder containing `README.md`, `supplydesk`, and `tests`, run:
 python -m unittest discover -s tests -v
 ```
 
-The supplied tests should finish with:
+No extra packages are needed. Every test uses a temporary save file, so running the suite never changes your saved orders or stock.
 
-```text
-Ran 4 tests
+### Test files
 
-OK
+| File | What it covers |
+|---|---|
+| `tests/test_smoke.py` | The four supplied starter tests (unchanged). |
+| `tests/test_service_behaviour.py` | Assignment Task 2 tests for `OrderService`, grouped into `NormalBehaviourTests`, `BoundaryBehaviourTests`, `InvalidInputTests` and `PreserveBehaviourTests`. Expected values come from `FUNCTIONAL_SPEC.md`. |
+| `tests/test_interfaces.py` | Command-line (`cli.main`) and interactive menu (`menu.run_menu`) behaviour that refactoring must preserve: defaults, JSON output, exit statuses, confirmation prompts, error handling. |
+
+Run one group only, for example:
+
+```sh
+python -m unittest tests.test_service_behaviour.BoundaryBehaviourTests -v
 ```
 
-These four tests are a starting point. **Passing them does not mean every required behavior is correct.** You will add meaningful tests as part of the assignment.
+### Expected result and known failures
 
-The supplied tests use temporary files and do not change your saved orders or stock.
+On the refactored code (before CR-01) the suite runs **42 tests with 3 failures**. The three failures are deliberate evidence of defects in the supplied behaviour, not broken tests; their expected values come from the specification and were not changed to make them pass:
+
+| Failing test | Spec requirement | Actual behaviour |
+|---|---|---|
+| `test_student_discount_applies_at_exactly_5000` | 10% student discount when subtotal is **at least** 5000 cents | `subtotal > 5000`, so exactly 5000 gets no discount |
+| `test_combined_duplicate_lines_cannot_exceed_stock` | combined quantity across duplicate lines must not exceed stock | stock is checked per line, so `bag:3` + `bag:2` (stock 4) is accepted |
+| `test_cancelling_twice_restores_stock_only_once` | cancelling an already cancelled order changes nothing | stock is restored again on every cancellation |
+
+### Recorded evidence
+
+The `evidence/` folder holds the recorded runs (date, Python version and commit are in each file header):
+
+- `00-starter-tests-baseline.txt`: the four starter tests on the original code.
+- `01-baseline-before-refactoring.txt`: all tests on the original code, before refactoring.
+- `02-after-refactoring.txt`: all tests after the three refactorings.
+- `02-cli-differential.txt`: the same CLI scenario run against the original and refactored code, with identical output.
+
+To re-record a run: `sh evidence/run_tests.sh "<label>" evidence/<file>.txt`. To repeat the differential check, run `sh evidence/compare_cli.sh <folder>` once on a checkout of the original commit and once on this folder, then compare the two outputs with `diff`.
 
 ## 4. Saved data and practice sessions
 
@@ -152,7 +177,8 @@ Avoid running two instances that change the same save file simultaneously.
 - **`supplydesk/service.py`** — Quotes, orders, inventory operations, and cancellation.
 - **`supplydesk/storage.py`** — Loading and saving local JSON data.
 - **`supplydesk/catalog.json`** — Initial products, prices, and stock for a new session.
-- **`tests/test_smoke.py`** — Four starter tests.
+- **`tests/`** — Starter smoke tests plus the assignment's added tests (see section 3).
+- **`evidence/`** — Recorded test runs and the CLI differential check.
 
 The menu and individual commands use the same service and saved data. When a later requirement affects available choices or displayed information, review both interfaces.
 
