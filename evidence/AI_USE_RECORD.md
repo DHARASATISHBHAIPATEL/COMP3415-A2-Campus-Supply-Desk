@@ -1,0 +1,26 @@
+# AI-use record (Task 6)
+
+**Assistant:** Claude (Anthropic), used through Claude Code after Checkpoint A was submitted.
+**Interaction record:** the full conversation is the Claude project thread "Complete A2 tests, refactoring and report" (link to be added by Dhara as a shareable record).
+**What the AI was given:** the starter repository, the assignment brief, and Dhara's submitted Checkpoint A (system understanding note, five diagnoses, initial testing strategy).
+
+Each row below is a recommendation the AI actually made, with the evidence available to judge it. **The Decision column is Dhara's to fill in** (ACCEPT, MODIFY or REJECT). The report must use three of these, covering at least two different decision categories.
+
+| # | AI recommendation (summary) | Area | Evidence to judge it | Decision (Dhara) | What was ultimately done (Dhara) |
+|---|---|---|---|---|---|
+| 1 | Extract one private method, `_price_request()`, that validates and prices a request, and have both `quote()` and `place_order()` call it (Remove Duplicated Code, diagnosis 1). | Refactoring | Commit `088c523` removes 58 lines and adds 22. All 42 tests give the same per-test result as the baseline (`evidence/01…` vs `evidence/02-after-refactoring.txt`). The CLI scenario output, including the saved JSON file, is byte-identical to the original commit (`evidence/02-cli-differential.txt`). `test_quote_and_placement_agree_on_pricing` pins the quote/placement agreement. | | |
+| 2 | Use a single `_adjust_stock(state, lines, direction)` helper with `direction=-1` for placement and `+1` for cancellation (part of the Long Method refactoring, diagnosis 2). | Refactoring | It removes the duplicated nested loop in `place_order()` and `cancel_order()`, and tests are unchanged. **Counter-evidence:** a numeric "direction" flag is itself a mild smell (Flag Argument), since a reader must remember what `-1` means. Two small methods, such as `_deduct_stock()` and `_restore_stock()`, would read more clearly at the cost of a few duplicated lines. | | |
+| 3 | Keep the three defect-exposing tests failing (do not mark them `@unittest.expectedFailure`, and do not change their expected values), and keep the defects unfixed during refactoring so that refactoring is shown to be behaviour-preserving. | Testing | The brief says not to silently change an expected result, and to document defects separately from refactoring. The baseline and after-refactoring runs both show exactly the same 3 failures, which is the evidence that the refactoring preserved behaviour. **Counter-argument:** a red suite on GitHub can be mistaken for broken work, which is why the README lists the three failures explicitly. | | |
+| 4 | After refactoring, fix the three defects in a separate commit (`>=` threshold, combined-quantity stock check, idempotent cancellation), each turning its failing test green, before implementing CR-01. | Debugging | Each defect has a failing test and a spec quotation (README section 3). The fixes are small: one operator, one aggregate check in `_price_request()`, and one early return in `cancel_order()`. **Consider:** the brief does not require defects to be fixed. Fixing them changes behaviour, so it must not be described as refactoring. CR-01 may also touch the same code. | | |
+| 5 | Add a direct unit test for `percent_of_cents()` (for example `percent_of_cents(5005, 10) == 501`), because every catalog price is a multiple of 250 cents, so the spec's half-cent rounding rule can never be reached through `quote()` with the shipped catalog. | Testing | Every price in `supplydesk/catalog.json` (500, 750, 4000, 1500, 2500) is divisible by 250. 10% of any reachable subtotal is therefore a whole number of cents, and the `+ 50` rounding term is never exercised by service-level tests. The extracted `percent_of_cents()` makes this testable in isolation. This is a testability benefit of refactoring 1 (magic numbers). | | |
+| 6 | Treat the per-line stock check as a separate, sixth problem (a defect found by testing) rather than folding it into diagnosis 4, because Checkpoint A lists it only as a test idea. | Code smells / diagnosis | `test_combined_duplicate_lines_cannot_exceed_stock` fails. `place --item bag:3 --item bag:2` succeeds and leaves bag stock at **-1** (see `evidence/02-cli-differential.txt`). Note that Task 3 asks for exactly five diagnoses, so this would belong in the testing results or the defect section, not as a replacement diagnosis. | | |
+
+## How to use this in the report (Task 6 table)
+
+For each of the three rows you choose, write:
+
+1. the recommendation (the summary above, or a quote from the thread);
+2. your decision;
+3. your technical justification, in your own words;
+4. the code, tests or execution evidence (from the Evidence column, or your own re-run); and
+5. what you ultimately did (a commit hash, or "not applied").
