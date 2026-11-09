@@ -1,5 +1,15 @@
 # Campus Supply Desk
 
+## About this submission
+
+**Dhara Patel, COMP3415 Assignment 2.** This repository builds on the instructor's starter code; the original is kept as the first commit (`82ed75e`).
+
+- **Tests (Task 2):** added normal, boundary, invalid and preserve tests in `tests/` (58 in total, run instructions in section 3).
+- **Refactoring (Task 4):** three behaviour-preserving refactorings of `supplydesk/service.py` (named constants, shared pricing method, split `place_order`).
+- **CR-01:** express delivery, with its prediction committed before implementation.
+- **Known defects:** 3 tests fail on purpose, documenting spec violations left unfixed (see section 3).
+- **Evidence:** test runs, CR-01 prediction and review, and the AI-use record are in `evidence/`. The full report is submitted as a PDF on MyCourseLink.
+
 This program is intentionally imperfect. Your assignment is to understand, test, and improve it—not to rewrite it.
 
 **Before using generative AI, submit Checkpoint A as required by the assignment.**
