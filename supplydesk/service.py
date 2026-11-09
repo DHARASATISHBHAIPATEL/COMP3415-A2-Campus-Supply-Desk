@@ -18,6 +18,17 @@ def percent_of_cents(amount_cents, percent):
     return (amount_cents * percent + 50) // 100
 
 
+def calculate_charges(customer_type, fulfillment, subtotal_cents):
+    """Return (discount_cents, delivery_cents) for an already validated request."""
+    discount = 0
+    if customer_type == "student" and subtotal_cents > STUDENT_DISCOUNT_THRESHOLD_CENTS:
+        discount = percent_of_cents(subtotal_cents, STUDENT_DISCOUNT_PERCENT)
+    delivery = 0
+    if fulfillment == "delivery" and subtotal_cents - discount < FREE_DELIVERY_THRESHOLD_CENTS:
+        delivery = DELIVERY_CHARGE_CENTS
+    return discount, delivery
+
+
 class OrderService:
     def __init__(self, state_path=".supplydesk/state.json"):
         self.store = JsonStore(state_path)
@@ -32,19 +43,33 @@ class OrderService:
     def place_order(self, customer_type, items, fulfillment="pickup"):
         state = self.store.load()
         priced = self._price_request(state, customer_type, items, fulfillment)
-        order = {
-            "order_id": "ORD-" + str(state["next_order_number"]).zfill(4),
-            "status": "placed",
-            **priced,
-        }
-        for line in order["items"]:
-            for product in state["catalog"]:
-                if product["product_id"] == line["product_id"]:
-                    product["stock"] -= line["quantity"]
+        order = {"order_id": self._format_order_id(state["next_order_number"]),
+                 "status": "placed",
+                 **priced}
+        self._adjust_stock(state, order["items"], direction=-1)
         state["next_order_number"] += 1
         state["orders"].append(order)
         self.store.save(state)
         return order
+
+    @staticmethod
+    def _format_order_id(number):
+        return "ORD-" + str(number).zfill(4)
+
+    @staticmethod
+    def _find_product(catalog, product_id):
+        """Return the catalog entry with product_id, or None."""
+        for product in catalog:
+            if product["product_id"] == product_id:
+                return product
+        return None
+
+    def _adjust_stock(self, state, lines, direction):
+        """Add (direction=+1) or remove (direction=-1) each line's quantity from stock."""
+        for line in lines:
+            product = self._find_product(state["catalog"], line["product_id"])
+            if product is not None:
+                product["stock"] += direction * line["quantity"]
 
     def _price_request(self, state, customer_type, items, fulfillment):
         """Validate a request against state and price it. Shared by quote and place_order.
@@ -62,11 +87,7 @@ class OrderService:
         for item in items:
             if not isinstance(item, dict):
                 raise ValueError("Each item must contain a product_id and quantity.")
-            product = None
-            for candidate in state["catalog"]:
-                if candidate["product_id"] == item.get("product_id"):
-                    product = candidate
-                    break
+            product = self._find_product(state["catalog"], item.get("product_id"))
             if product is None:
                 raise ValueError("Unknown product.")
             quantity = item.get("quantity")
@@ -83,12 +104,7 @@ class OrderService:
                 "quantity": quantity,
                 "line_total_cents": line_total,
             })
-        discount = 0
-        if customer_type == "student" and subtotal > STUDENT_DISCOUNT_THRESHOLD_CENTS:
-            discount = percent_of_cents(subtotal, STUDENT_DISCOUNT_PERCENT)
-        delivery = 0
-        if fulfillment == "delivery" and subtotal - discount < FREE_DELIVERY_THRESHOLD_CENTS:
-            delivery = DELIVERY_CHARGE_CENTS
+        discount, delivery = calculate_charges(customer_type, fulfillment, subtotal)
         return {
             "customer_type": customer_type,
             "fulfillment": fulfillment,
@@ -118,10 +134,9 @@ class OrderService:
                 break
         if order is None:
             raise ValueError("Unknown order: " + order_id)
-        for line in order["items"]:
-            for product in state["catalog"]:
-                if product["product_id"] == line["product_id"]:
-                    product["stock"] += line["quantity"]
+        # Known defect (diagnosis 5): no check for an already-cancelled order,
+        # so a second cancellation restores stock again. Kept by refactoring.
+        self._adjust_stock(state, order["items"], direction=+1)
         order["status"] = "cancelled"
         self.store.save(state)
         return order
