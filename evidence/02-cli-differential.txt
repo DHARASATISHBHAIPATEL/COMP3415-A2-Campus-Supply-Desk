@@ -1,0 +1,3 @@
+# Differential check: CLI scenario on original commit 82ed75e vs refactored 8ead53b
+# command: sh evidence/compare_cli.sh <dir> for each, then diff
+RESULT: outputs identical (475 lines, 17 commands + final save file)
